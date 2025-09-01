@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from models.chunk import Chunk
 from .text_splitter import TextSplitter
+from utils.common.id_generator import ChunkIDGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,11 @@ class ChunkBuilder:
                 continue
 
             chunk = Chunk(
+                    id=ChunkIDGenerator.generate_deterministic_id(
+                    payload.source, 
+                    payload.id_in_source, 
+                    chunk_index=idx
+                ),
                 source=payload.source,
                 type=payload.chunk_type,
                 id_in_source=payload.id_in_source,
@@ -72,6 +78,11 @@ class ChunkBuilder:
             raise ValueError("Text cannot be empty")
 
         return Chunk(
+                    id=ChunkIDGenerator.generate_deterministic_id(
+                    payload.source, 
+                    payload.id_in_source, 
+                    chunk_index=0
+                ),
             source=payload.source,
             type=payload.chunk_type,
             id_in_source=payload.id_in_source,
