@@ -36,6 +36,9 @@ _settings = {
         "batch_size": int(os.getenv("YANDEX_BATCH_SIZE", "16")),
         "top_k": int(os.getenv("YANDEX_TOP_K", "4")),
         "search_threshold": float(os.getenv("YANDEX_SEARCH_THRESHOLD", "0.55")),
+        "embed_dim": int(os.getenv("YANDEX_EMBED_DIM", "256")),
+        "request_timeout": int(os.getenv("YANDEX_REQUEST_TIMEOUT", "60")),
+        "max_retries": int(os.getenv("YANDEX_MAX_RETRIES", "3")),
     },
     "chunking": {
         "size": int(os.getenv("CHUNK_SIZE", "512")),

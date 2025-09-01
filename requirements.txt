@@ -1,3 +1,6 @@
 atlassian-python-api
 langchain-text-splitters
 python-dotenv
+beautifulsoup4
+aiohttp
+asyncio

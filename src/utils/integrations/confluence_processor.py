@@ -7,6 +7,9 @@ from utils.text.html_cleaner import clean_html
 from utils.text.chunk_builder import ChunkBuilder, ChunkPayload
 from utils.common.progress_tracker import ProgressTracker
 from .confluence_client import ConfluenceClient
+from utils.embeddings.yandex_client import YandexEmbeddingClient, YandexEmbeddingConfig
+from utils.embeddings.embedding_processor import EmbeddingProcessor
+from config.settings import settings
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +27,26 @@ class ConfluencePageData:
 class ConfluenceProcessor:
     """Полный pipeline обработки Confluence данных."""
     
-    def __init__(self, client: ConfluenceClient, chunk_builder: ChunkBuilder):
+    def __init__(self, client: ConfluenceClient, chunk_builder: ChunkBuilder, with_embeddings: bool = True):
+        self.client = client
+        self.chunk_builder = chunk_builder
+        self.with_embeddings = with_embeddings
+        
+        # Инициализация клиента эмбеддингов
+        if self.with_embeddings:
+            embedding_config = YandexEmbeddingConfig(
+                folder_id=settings.yandex.folder_id,
+                api_key=settings.yandex.api_key,
+                iam_token=settings.yandex.iam_token,
+                embed_model=settings.yandex.embed_model,
+                embedding_dimension=settings.yandex.embedding_dimension if settings.yandex.embedding_dimension else None,
+                request_timeout=settings.yandex.request_timeout,
+                max_retries=settings.yandex.max_retries,
+                api_endpoint=settings.yandex.api_endpoint
+            )
+            embedding_client = YandexEmbeddingClient(embedding_config)
+            self.embedding_processor = EmbeddingProcessor(embedding_client, settings.yandex.batch_size)
+
         self.client = client
         self.chunk_builder = chunk_builder
     
